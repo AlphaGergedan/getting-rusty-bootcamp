@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en" charset="utf-8">
+  <head>
+    <title>Lecture 5: Testing, tooling and development practices in Rust</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+    <link href="../assets/dz.css" rel="stylesheet"/>
+    <link href="../assets/slides.css" rel="stylesheet"/>
+    <link href="https://{{cdn}}/prismjs@v1.x/themes/prism.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-bash.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="../assets/dz.js"></script>
+    <link href="../assets/gruvbox-light.css" rel="stylesheet">
+
+    <!-- Uncomment for Gruvbox dark theme  -->
+    <!--<link href="../assets/gruvbox-dark.css" rel="stylesheet">-->
+
+    <!-- Uncomment for the default theme -->
+    <!--<link id="theme-link" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">-->
+
+    <!-- Uncomment for tomorrow theme -->
+    <!--<link id="theme-link" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">-->
+  </head>
+  <body>
+
+    <!--Title Slide-->
+    <section>
+      <h1>
+        Testing
+        <br />
+        <small>Go to <a target="blank" href="https://github.com/AlphaGergedan/getting-rusty-bootcamp">github.com/alphagergedan/getting-rusty-bootcamp</a></small>
+      </h1>
+      <footer>
+        Atamert Rahma @alphagergedan
+      </footer>
+    </section>
+
+    <!--About me Slide-->
+    <section>
+      <h2 class="slide-title">About me</h2>
+      <div class="text-left">
+        <p>I am a doctoral researcher in scientific machine learning at Chair of scientific computing (Chair 05 at TUM School of CIT).</p>
+        <ul>
+          <li>focusing on novel neural network architectures for scientific tasks using randomized algorithms</li>
+          <li>used Rust in implementing and training neural networks, web (backend) and Solana programs (blockchain)</li>
+          <li>links:</li>
+          <ul>
+            <li>
+              <small>homepage at <a target="blank" href="https://www.cs.cit.tum.de/sccs/personen/atamert-rahma/">www.cs.cit.tum.de/sccs/personen/atamert-rahma</a></small>
+            </li>
+            <li>
+              <small>github at <a target="blank" href="https://github.com/alphagergedan/">github.com/alphagergedan</a></small>
+            </li>
+            <li>
+              <small>linkedin at <a target="blank" href="https://www.linkedin.com/in/atamert-rahma-6888a419b/">www.linkedin.com/in/atamert-rahma-6888a419b/</a></small>
+            </li>
+            <li>
+              <small>hobby blog at <a target="blank" href="https://alphagergedan.github.io">alphagergedan.github.io</a></small>
+            </li>
+          </ul>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Slide 1-->
+    <section>
+      <h2 class="slide-title">Why testing matters?</h2>
+      <footer> 1/46 </footer>
+      <div class="text-left">
+        <p><em>"Testing leads to failure, and failure leads to understanding."</em> — Burt Rutan</p>
+        <div class="incremental text-left">
+          <ul>
+            <li>Testing ensures code <b>correctness and reliability</b>.</li>
+            <li><b>Rust</b> encourages testing through its ecosystem and tooling.</li>
+            <li>Use your program, try to break it, and write tests for it.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 2-->
+    <section>
+      <h2 class="slide-title">Today's agenda</h2>
+      <footer> 2/46 </footer>
+      <div class="text-left">
+        <ol>
+          <li>Writing tests</li>
+          <li>Rust development practices</li>
+          <li>Formatting and linting</li>
+          <li>Benchmarking</li>
+        </ol>
+      </div>
+    </section>
+
+<!--1/4-->
+<!--Writing tests in rust-->
+<!--Writing tests in rust-->
+<!--Writing tests in rust-->
+
+    <section>
+      <h2 class="vcenter hcenter">Writing tests</h2>
+    </section>
+
+    <!--Slide 3-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>3/46</footer>
+      <div class="text-left">
+        <h4>Directory structure in Rust</h4>
+        <pre><code>.
+├── Cargo.lock
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── main.rs
+│   ├── module_1/
+│   │   ├── mod.rs
+│   │   └── [...]
+│   └── [...]
+└── [...]</code></pre>
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <span>Unit tests are usually placed inside the modules they are testing:</span>
+        <ul>
+          <li>
+            <span>Inline in the same file as the module (e.g., <b><code>src/module_1/mod.rs</code></b>)</span>
+          </li>
+          <li>
+            <span>Or in a separate file within the module directory (e.g., <b><code>src/module_1/tests.rs</code></b>)</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!--Slide 4-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>4/46</footer>
+      <div class="text-left">
+        <h4>Anatomy of a Test function</h4>
+        <pre><code class="language-rust">#[test]
+fn test_name() {
+    // Setup: Prepare variables or context
+    [...]
+
+    // Assertion: Ensure a condition is true
+    assert!(...);
+
+    // Assertion: Check equality of values
+    assert_eq!(...);
+
+    // Assertion: Check inequality of values
+    assert_ne!(...);
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <h4>&Rightarrow; Run your tests using <code>$ cargo test</code> on the console</h4>
+      </div>
+    </section>
+
+    <!--Slide 5-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>5/46</footer>
+      <div class="text-left">
+        <h4>Example (inline unit tests): <code>src/add/mod.rs</code></h4>
+        <pre><code class="language-rust">pub fn add(a: i32, b: i32) -&gt; i32 {
+    a + b
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_add() {
+        let result = add(2, 3);
+        assert_eq!(result, 5);
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 6-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>6/46</footer>
+      <div class="text-left">
+        <h4>Example (separate unit tests): <code>src/add/mod.rs</code></h4>
+        <pre><code class="language-rust">pub fn add(a: i32, b: i32) -&gt; i32 {
+    a + b
+}
+
+#[cfg(test)]
+mod tests;</code></pre>
+        <h4><code>src/add/tests.rs</code></h4>
+        <pre><code class="language-rust">use super::*;
+
+#[test]
+fn test_add() {
+    let result = add(2, 3);
+    assert_eq!(result, 5);
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 7-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>7/46</footer>
+      <div class="text-left">
+        <h4>Running the tests of a module</h4>
+        <pre><code class="language-sh">$ cargo test add
+
+[...]
+running 1 test
+test add::tests::test_add ... ok
+[...]</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <h4>&Rightarrow; You can also run only a specific test with <code class="language-sh">$ cargo test add::test_add</code></h4>
+        <h4>&Rightarrow; What about failing tests?</h4>
+      </div>
+    </section>
+
+    <!--Slide 8-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>8/46</footer>
+      <div class="text-left">
+        <h4>Failing test example</h4>
+        <pre><code class="language-sh">$ cargo test some_other_module
+
+[...]
+test some_other_module::tests::test_some_function ... FAILED
+
+failures:
+
+---- some_other_module::tests::test_some_function stdout ----
+thread 'some_other_module::tests::test_some_function' panicked:
+assertion `left == right` failed
+  left: 0
+ right: 1
+[...]</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <h4><code>assertion `left == right` failed</code> may not give us enough information</h4>
+        <div>
+          <br />
+          <h4>&Rightarrow; Add custom failure messages</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 9-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>9/46</footer>
+      <div class="text-left">
+        <h4>Adding custom failure messages: <code>src/some_other_module/tests.rs</code></h4>
+        <pre><code class="language-rust">use super::*;
+
+#[test]
+fn test_some_function() {
+    let result = some_function(); // 0
+    assert_eq!(
+        some_function(), 1,
+        "{} must equal 1", result
+    );
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <h4>
+          <code>assertion `left == right` failed: 0 must equal 1</code>
+        </h4>
+        <div>
+          <br />
+          <h4>&Rightarrow; Useful for giving context about what an assertion means</h4>
+          <br />
+        </div>
+        <h4>&Rightarrow; Also works with <code>assert!</code>, <code>assert_ne!</code></h4>
+      </div>
+    </section>
+
+    <!--Slide 10-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>10/46</footer>
+      <div class="text-left">
+        <h4>Checking for panics with <code>should_panic</code></h4>
+        <pre><code class="language-rust">#[test]
+#[should_panic]
+fn test_divide_by_zero() {
+    div(1, 0);
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Specifying the expected message</h4>
+          <pre><code class="language-rust">#[test]
+#[should_panic(expected = "Cannot divide by zero")]
+fn test_divide_by_zero() {
+    div(1, 0);
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 11-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>11/46</footer>
+      <div class="text-left">
+        <h4>What if the function we want to test returns a <code>Result</code> type?</h4>
+        <pre><code class="language-rust">fn add_strings(a: &str, b: &str) -&gt; Result&lt;i32, String&gt; {
+    let num_a: i32 = a.parse()
+        .map_err(|_| "Failed to parse left operand")?;
+    let num_b: i32 = b.parse()
+        .map_err(|_| "Failed to parse right operand")?;
+    Ok(num_a + num_b)
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>You can use <code>Result</code> type in tests</h4>
+          <pre><code class="language-rust">#[test]
+fn test_add_strings() -&gt; Result&lt;(), String&gt; {
+    let result = add_strings("2", "3")?;
+    assert_eq!(result, 5, "Two plus three must equal five");
+    Ok(())
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 12-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>12/46</footer>
+      <div class="text-left">
+        <h4>Running tests parallel or consecutively</h4>
+        <br />
+        <span>In Rust, tests are run in parallel by default</span>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <br />
+          <h4>If your tests need to share some state, e.g. consecutively read, process and write to a file, then they cannot be run in parallel</h4>
+          <pre><code class="language-sh">$ cargo test -- --test-threads=1</code></pre>
+        </div>
+        <div>
+          <span><b><code>--test-threads</code></b> specifies the number of threads you want to use to the test binary</span>
+        </div>
+        <div>
+          <br />
+          <h4>&Rightarrow; Specifying <code>--test-threads=1</code> means running the tests consecutively</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 13-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>13/46</footer>
+      <div class="text-left">
+        <h4>Ignoring some tests unless specifically requested</h4>
+<pre><code class="language-rust">#[test]
+#[ignore]
+fn expensive_test() {
+    // code that takes an hour to run
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>&Rightarrow; <code>$ cargo test -- --ignored</code> to only run the ignored tests</h4>
+          <br />
+        </div>
+        <h4>&Rightarrow; <code>$ cargo test -- --include-ignored</code> to run all tests</h4>
+      </div>
+    </section>
+
+    <!--Slide 14-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>14/46</footer>
+      <div class="text-left">
+        <h4>Documentation tests</h4>
+        <pre><code class="language-rust">/// Adds two numbers.
+///
+/// # Examples
+///
+/// ```
+/// use my_crate::add;
+///
+/// assert_eq!(add(2,2), 4);
+/// ```
+pub fn add(a: i32, b: i32) -&gt; i32 {
+    a + b
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <span>&Rightarrow; Doc tests are also run with <b><code>$ cargo test</code></b>, Rust ecosystem encourages testing through documentation!</span>
+          <br />
+        </div>
+        <div>
+          <span>&Rightarrow; This makes sure that examples within your documentation are <b>up to date and working</b>.</span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 15-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>15/46</footer>
+      <div class="text-left">
+        <h4>In Rust, Integration tests are entirely external to your code</h4>
+        <pre><code>.
+├── Cargo.lock
+├── Cargo.toml
+├── src/
+│   └── [...]
+└── tests/
+    └── integration_test.rs</code></pre>
+<!--├── benches/-->
+<!--│   └── [...]-->
+<!--├── examples/-->
+<!--│   └── [...]-->
+<!--└── tests/-->
+    <!--└── [...]</code></pre>-->
+        <br />
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>&Rightarrow; Integration tests can only call functions that are part of your public API</h4>
+          <br />
+        </div>
+        <div>
+          <h4>Each file in the <code>tests/</code> directory is a separate crate</h4>
+          <h4>&Rightarrow; We need to bring our library into each test crate's scope</h4>
+        </div>
+        <div>
+          <br />
+          <h4>We do not need to annotate any code in <code>tests/</code> with <code>#[cfg(test)]</code></h4>
+          <h4><code>$ cargo test</code> runs first unit tests, then integration tests, and then the doc tests</h4>
+        </div>
+        <div>
+          <br />
+          <span><b>Goal of integration tests</b>: To test whether many parts of your library work together correctly</span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 16-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>16/46</footer>
+      <div class="text-left">
+        <h4>Example CLI application (add_cli)</h4>
+        <br />
+        <h4><code>src/main.rs</code></h4>
+        <pre><code class="language-rust">use add_cli::{add, parse};
+use std::env;
+
+fn main() -&gt; Result&lt;(), String&gt; {
+    let args: Vec&lt;String&gt; = env::args().collect();
+    let left: i32 = parse(&args[1])?;
+    let right: i32 = parse(&args[2])?;
+    print!("Sum: {}\n", add(left, right));
+    Ok(())
+}</code></pre>
+        <div class="incremental text-left">
+          <h4>
+            <code>$ cargo run -- 1 2</code> outputs <code>Sum: 3</code> with a newline
+          </h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 17-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>17/46</footer>
+      <div class="text-left">
+        <h4>Example integration test for <code>parse</code> and <code>add</code></h4>
+        <br />
+        <h4><code>tests/test_parse_and_add.rs</code></h4>
+        <pre><code class="language-rust">use add_cli::{add, parse};
+
+#[test]
+fn test_successful_parse_and_add() -&gt; Result&lt;(), String&gt; {
+    let num_str_left = "1";
+    let num_str_right = "2";
+
+    let left: i32 = parse(num_str_left)?;
+    let right: i32 = parse(num_str_right)?;
+
+    let sum = add(left, right);
+    assert_eq!(sum, 3);
+
+    Ok(())
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 18-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>18/46</footer>
+      <div class="text-left">
+        <h4>Example end-to-end test for the app</h4>
+        <br />
+        <h4><code>tests/test_add_cli.rs</code></h4>
+        <pre><code class="language-rust">use std::process::Command;
+
+#[test]
+fn test_valid_input() {
+    let output = Command::new(env!("CARGO_BIN_EXE_add_cli"))
+        .arg("1").arg("2")
+        .output()
+        .expect("Failed to execute command");
+    assert!(output.status.success());
+
+    let stdout = String::from_utf8(output.stdout)
+        .expect("Failed to parse stdout");
+    assert_eq!(stdout, "Sum: 3\n");
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 19-->
+    <section>
+      <h2 class="slide-title">Writing tests</h2>
+      <footer>19/46</footer>
+      <h4 class="text-left">Outlook: Unofficial testing tools</h4>
+      <br />
+      <div>
+        <ul div class="incremental text-left">
+          <div>
+            <li>
+              <b><code>nextest</code></b>: Faster and prettier test runner (doctests are not supported yet).
+              <br />
+              <br />
+              <div>
+                <span>Very easy to get started with <b><code>cargo-nextest</code></b></span>
+              </div>
+            </li>
+            <br />
+          </div>
+          <div>
+            <li><b><code>tarpaulin</code></b>: Code coverage tool.
+              <br />
+              <br />
+              <div>
+                <span>It can show how many lines of your code has been covered with tests, and which lines are uncovered:</span><br />
+                <code>22.58% coverage, 7/31 lines covered</code>
+              </div>
+            </li>
+            <br />
+          </div>
+          <div>
+            <li>
+              <b><code>proptest</code></b>: Property-based testing.
+              <br />
+              <br />
+              <div>
+                <span>It can automatically generate a wide range of complex test inputs to verify properties of your code.</span><br />
+                <span>If a test fails, it minimizes the failing input to the simplest case that it still reproduces the bug.</span>
+              </div>
+            </li>
+          </div>
+          <!--<li><b><code>mockall</code></b>: Mocking library.</li>-->
+        </ul>
+      </div>
+    </section>
+
+    <!--[>Slide 20<]-->
+    <!--<section>-->
+      <!--<h2 class="slide-title">Writing tests</h2>-->
+      <!--<footer>20/46</footer>-->
+      <!--<div class="text-left">-->
+        <!--<h4>Outlook: Property-based testing library for Rust <code>proptest</code></h4>-->
+        <!--<pre><code class="language-rust">use proptest::prelude::*;-->
+<!---->
+<!--proptest! {-->
+    <!--#[test]-->
+    <!--fn test_addition(a in 0..100, b in 0..100) {-->
+        <!--assert_eq!(add(a, b), a + b);-->
+    <!--}-->
+<!--}</code></pre>-->
+      <!--</div>-->
+      <!--<div class="incremental text-left">-->
+        <!--<div>-->
+          <!--<span>&Rightarrow; Allows user-friendly more <b>complex input generation</b></span>-->
+        <!--</div>-->
+        <!--<div>-->
+          <!--<span>&Rightarrow; It can <b>automatically generate a wide range of test cases</b></span>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</section>-->
+
+<!--2/4-->
+<!--Rust development practices-->
+<!--Rust development practices-->
+<!--Rust development practices-->
+<!--Rust development practices-->
+
+    <section>
+      <h2 class="vcenter hcenter">Rust development practices</h2>
+    </section>
+
+    <!--Slide 20-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>20/46</footer>
+      <div class="text-left">
+        <h4>Test-driven development (TDD)</h4>
+        <small>As a concept: Write tests before you write the code.</small>
+        <br />
+        <br />
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Red, Green, Refactor cycle:</h4>
+          <ol>
+            <li>Write a failing test (Red).</li>
+            <li>Write the minimal code to pass the test (Green).</li>
+            <li>Refactor the code while keeping tests passing.</li>
+          </ol>
+        </div>
+        <div>
+          <br />
+          <h4>&Rightarrow; Forces you to think about what you want the code to do before you write it.</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 21-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>21/46</footer>
+      <div class="text-left">
+        <h4>How to start out with a skeleton in Rust?</h4>
+        <br />
+        <h4><code>src/main.rs</code></h4>
+        <pre><code class="language-rust">// The main executable will consist of many methods
+// We can usually make many decision-mistakes here
+// Example: Training a model to approximate a complex function.
+//    1) Generate a dataset
+//    2) Configure a model
+//    3) Fit the model
+//    4) Inspect the error and visualize the solution
+fn main() {}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>&Rightarrow; Create your skeleton using <code>todo!(message)</code></h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; TDD can provide safe and maintainable divide & conquer for the implementation of your application logic</h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; Makes implementing complex applications more managable</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 22-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>22/46</footer>
+      <div class="text-left">
+        <h4>Starting with a skeleton using <code>todo!</code></h4>
+        <br />
+        <h4><code>src/main.rs</code></h4>
+        <pre><code class="language-rust">fn main() {
+    let input = 5;
+    let result = square(input);
+    println!("The square of 5 is {}", result);
+}
+
+fn square(x: i32) -&gt; i32 {
+    todo!("Implement square function");
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <span><code>$ cargo run</code> gives</span>
+          <br />
+          <br />
+          <h4>not yet implemented: Implement square function</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 23-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>23/46</footer>
+      <div class="text-left">
+        <h4>Adding debugging checks with <code>debug_assert!</code>, <code>debug_assert_eq!</code></h4>
+        <pre><code class="language-rust">fn square(x: i32) -&gt; i32 {
+    debug_assert!(x.abs() &lt; 1000,
+        "Input is too large for this example");
+    todo!("Implement square function");
+}</code></pre>
+      </div>
+      <div class="text-left incremental">
+        <div>
+          <h4>&Rightarrow; Use <code>todo!</code> to make your code compile for your skeleton</h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; <code>debug_assert!</code> is like assert but only runs in debug mode</h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; <code>assert!</code> can be used too if you must abort in an unrecoverable state</h4>
+          <br />
+        </div>
+        <div>
+          <h4>You can also use the unofficial <code>debug_print</code> crate to have print macros that are not compiled in release builds</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 24-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>24/46</footer>
+      <div class="text-left">
+        <h4>Writing unit tests for your skeleton</h4>
+        <pre><code class="language-rust">#[test]
+fn test_square() {
+    assert_eq!(square(2), 4);
+    assert_eq!(square(-3), 9);
+    assert_eq!(square(0), 0);
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Implement the function</h4>
+          <pre><code class="language-rust">fn square(x: i32) -&gt; i32 {
+    debug_assert!(x.abs() &lt; 1000,
+        "Input is too large for this example");
+    x * x
+}</code></pre>
+        </div>
+        <div>
+          <h4>&Rightarrow; Keep your functions small and focused</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 25-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>25/46</footer>
+      <div class="text-left">
+        <h4>Thinking in expressions</h4>
+        <pre><code class="language-rust">let status = if logged_in {
+    "Active"
+} else {
+    "Inactive"
+};</code></pre>
+        <pre><code class="language-rust">let state = loop {
+
+    // game loop
+
+    if game_over {
+        break 1
+    }
+};</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 26-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>26/46</footer>
+      <div class="text-left">
+        <h4>Thinking in expressions</h4>
+        <pre><code class="language-rust">let grade = match score {
+    90..=100 =&gt; "A",
+    80..=89 =&gt; "B",
+    70..=79 =&gt; "C",
+    _ =&gt; "D",
+};</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <span>&Rightarrow; Rust's expression-oriented design enables code that is <b>modular and testable in isolation</b></span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 27-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>27/46</footer>
+      <div class="text-left">
+        <h4>Use <code>mod</code> to organize your code into modules</h4>
+        <br />
+        <h4><code>src/lib.rs</code></h4>
+        <pre><code class="language-rust">pub mod math {
+    pub fn square(x: i32) -&gt; i32 {...}
+}</code></pre>
+      </div>
+        <div class="text-left incremental">
+          <div>
+            <h4>&Rightarrow; If your module gets large, separate it into its own file using <code>src/math.rs</code></h4>
+            <br />
+          </div>
+          <div>
+            <h4>&Rightarrow; You can also separate it into its own directory using <code>src/math/mod.rs</code></h4>
+            <br />
+          </div>
+          <div>
+            <h4>&Rightarrow; Outlook: Workspaces / Having crates in your crates that share the same <code>Cargo.lock</code></h4>
+          </div>
+        </div>
+    </section>
+
+    <!--<section>-->
+      <!--<h4>Global variables</h4>-->
+      <!--<h4><code>const</code> are inlined in compile-time, they do not have a memory location</h4>-->
+      <!--<h4><code>static</code> are variables that have the static lifetime (they exist for the entire lifetime of the program), they have fixed memory locations and can be mutable</h4>-->
+    <!--</section>-->
+
+    <!--Slide 28-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>28/46</footer>
+      <div class="text-left">
+        <h4>Documentation practices: Use <code>//!</code> for module docs</h4>
+        <br />
+        <h4><code>src/lib.rs</code></h4>
+        <pre><code class="language-rust">// [Usually some License information]
+
+//! This is the root module documentation for the crate.
+//! It describes the overall purpose and functionality.
+
+// Module definition, this is a normal comment
+pub mod math;</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 29-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>29/46</footer>
+      <div class="text-left">
+        <h4>Documentation practices: Use <code>///</code> for function docs</h4>
+        <br />
+        <h4><code>src/math.rs</code></h4>
+        <pre><code class="language-rust">//! This is the documentation for the `math` module.
+
+/// Docs for the square function
+/// Calculates the square of a number.
+pub fn square(x: i32) -&gt; i32 {
+    x * x
+}</code></pre>
+    </section>
+
+    <!--Slide 30-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>30/46</footer>
+      <div class="text-left">
+        <h4>More clean code practices: Unnesting match arms for readability</h4>
+        <br />
+        <h4>Nested match</h4>
+        <pre><code class="language-rust">match result {
+    Ok(value) =&gt; process(value),
+    Err(err) =&gt; match err {
+        Error::NotFound =&gt; handle_not_found(),
+        Error::PermissionDenied =&gt; handle_permission(),
+    },
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Unnested match</h4>
+          <pre><code class="language-rust">match result {
+    Ok(value) =&gt; process(value),
+    Err(Error::NotFound) =&gt; handle_not_found(),
+    Err(Error::PermissionDenied) =&gt; handle_permission(),
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 31-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>31/46</footer>
+      <div class="text-left">
+        <h4>Nested match</h4>
+        <pre><code class="language-rust">let msg = match a {
+    Some(x) =&gt; match b {
+        Some(y) =&gt; format!("Both: {}, {}", x, y),
+        None =&gt; format!("Only a: {}", x),
+    },
+    None =&gt; match b {
+        Some(y) =&gt; format!("Only b: {}", y),
+        None =&gt; String::from("Neither"),
+    }
+};</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 32-->
+    <section>
+      <h2 class="slide-title">Rust development practices</h2>
+      <footer>32/46</footer>
+      <div class="text-left">
+        <h4>Unnested match</h4>
+        <pre><code class="language-rust">let msg = match (a, b) {
+    (Some(x), Some(y)) =&gt; format!("Both: {}, {}", x, y),
+    (Some(x), None) =&gt; format!("Only a: {}", x),
+    (None, Some(y)) =&gt; format!("Only b: {}", y),
+    (None, None) =&gt; String::from("Neither"),
+};</code></pre>
+      </div>
+    </section>
+
+    <!--<section>-->
+      <!--<h2>TODO: Logging with <code>log</code> and <code>env_logger</code></h2>-->
+      <!--<footer>30/46</footer>-->
+      <!--<div class="text-left">-->
+        <!--<h4>Simple logging in debug mode with <code>debug_print</code> crate</h4>-->
+        <!--<pre><code class="language-rust">use log::{info, warn, error};-->
+<!---->
+<!--fn main() {-->
+    <!--env_logger::init();-->
+    <!--info!("Starting application");-->
+    <!--warn!("This is a warning");-->
+    <!--error!("This is an error");-->
+<!--}</code></pre>-->
+      <!--</div>-->
+    <!--</section>-->
+
+
+<!--3/4-->
+<!--Formatting and linting-->
+<!--Formatting and linting-->
+<!--Formatting and linting-->
+
+    <section>
+      <h2 class="vcenter hcenter">Formatting and linting</h2>
+    </section>
+
+    <!--Slide 33-->
+    <section>
+      <h2 class="slide-title">Formatting and linting</h2>
+      <footer>33/46</footer>
+      <div class="text-left">
+        <h4>Code formatting with <code>rustfmt</code></h4>
+        <br />
+        <br />
+        <h4>Before running <code>$ cargo fmt</code></h4>
+        <pre><code class="language-rust">fn main() { let x=5;let y=10;println!("Sum: {}",x+y); }</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>After running <code>$ cargo fmt</code></h4>
+          <pre><code class="language-rust">fn main() {
+    let x = 5;
+    let y = 10;
+    println!("Sum: {}", x + y);
+}</code></pre>
+        </div>
+        <div>
+          <h4>&Rightarrow; Outlook: You can customize the style through <code>rustfmt.toml</code></h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 34-->
+    <section>
+      <h2 class="slide-title">Formatting and linting</h2>
+      <footer>34/46</footer>
+      <div class="text-left">
+        <h4><code>rustc</code> gives you warnings when you run <code>$ cargo build</code> to build your code</h4>
+        <pre><code class="language-sh">warning: variable `someNumber` should have a snake case name
+  --&gt; src/main.rs:23:9
+   |
+23 |     let someNumber = 12;
+   |         ^^^^^^^^^^ help: convert the identifier to
+                              snake case: `some_number`</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Rust-analyzer</h4>
+          <ul class="incremental">
+            <li>An implementation of Language Server Protocol for Rust</li>
+            <li>IDE support for Rust (code completion, definitions from docs etc.)</li>
+            <li>E.g., you can directly go to documentations and see example usage</li>
+            <li>Using Rust-analyzer: Install it and set up in your code editor (neovim, vscode etc.)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+        <!--<div>-->
+          <!--<h4>Linting with <code>clippy</code></h4>-->
+          <!--<ul>-->
+            <!--<li>With more than 500 lints, it can catch common mistakes and improve code quality</li>-->
+            <!--<li></li>-->
+            <!--<li></li>-->
+            <!---->
+          <!--</ul>-->
+        <!--</div>-->
+    <!--Slide 35-->
+    <section>
+      <h2 class="slide-title">Formatting and linting</h2>
+      <footer>35/46</footer>
+      <div class="text-left">
+        <h4>Linting with <code>clippy</code></h4>
+        <br />
+        <ul class="incremental">
+          <li>More than 500 lints</li>
+          <li>It can catch common mistakes and improve code quality</li>
+          <li>Great for idiomatic Rust and also sometimes can suggest optimizations</li>
+          <div>
+            <br />
+            <h4>&Rightarrow; Leads to fewer bugs and better performance</h4>
+          </div>
+        </ul>
+      </div>
+    </section>
+
+    <!--Slide 36-->
+    <section>
+      <h2 class="slide-title">Formatting and linting</h2>
+      <footer>36/46</footer>
+      <div class="text-left">
+        <h4>Linting with <code>clippy</code></h4>
+        <pre><code class="language-rust">let vec = vec![1, 2, 3];
+if vec.len() &gt; 0 {
+    println!("Vector is not empty");
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>After running <code>$ cargo clippy</code></h4>
+          <pre><code class="language-sh">warning: length comparison to zero
+--&gt; src/main.rs:27:8
+ |
+27 |     if vec.len() &gt; 0 {
+ |        ^^^^^^^^^^^^^ help: using `!is_empty` is clearer
+                              and more explicit:
+                              `!vec.is_empty()`</code></pre>
+        </div>
+      </div>
+    </section>
+
+<!--4/4-->
+<!--Benchmarking-->
+<!--Benchmarking-->
+<!--Benchmarking-->
+<!--Benchmarking-->
+
+    <section>
+      <h2 class="vcenter hcenter">Benchmarking</h2>
+    </section>
+
+    <!--Slide 37-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>37/46</footer>
+      <div class="text-left">
+        <h4>Benchmarking provides a feedback mechanism for your refactored code in TDD!</h4>
+        <br />
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <div>
+          <h4>First, change the performance of a Rust program without changing its code</h4>
+          <br />
+          <h4>&Rightarrow; by changing its build configuration at <code>Cargo.toml</code></h4>
+          <br />
+          <ul class="incremental text-left">
+            <div>
+              <li>Common pitfall: First ensure that you are using the release build via <br /><br /><b><code>$ cargo build --release</code></b></li>
+              <br />
+            </div>
+            <div>
+              <li>Common trade-off: <b>compile time vs. runtime speed</b></li>
+              <br />
+            </div>
+            <div>
+              <li>Prefer <b><code>$ cargo check</code></b> instead of <b><code>$ cargo build</code></b> to quickly ensure your code still compiles during development</li>
+              <br />
+            </div>
+            <div>
+              <li>Omit the <b><code>--release</code></b> flag during development for incremental builds: Debug builds are usually faster than release builds</li>
+            </div>
+            <div>
+              <h4>&Rightarrow; Depending on the metric we would like to optimize there are different build strategies</h4>
+            </div>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 38-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>38/46</footer>
+      <div class="text-left">
+        <span>&Rightarrow; Minimizing <b>runtime speed</b></span>
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <div>
+          <h4>Disabling codegen units (used to parallelize compilation)</h4>
+          <pre><code class="language-toml">[profile.release]
+codegen-units = 1</code></pre>
+        </div>
+        <div>
+          <h4>Increasing Link-Time optimization (LTO)</h4>
+          <pre><code class="language-toml">[profile.release]
+lto = true    # or "thin". This is default for release
+# lto = "fat" # Uncomment for more aggresive LTO</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 39-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>39/46</footer>
+      <div class="text-left">
+        <h4>CPU specific instructions (e.g. AVX SIMD for x86-64 CPUs) at the cost of compatibility</h4>
+        <pre><code class="language-bash">$ RUSTFLAGS="-C target-cpu=native" cargo build --release</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <h4>&Rightarrow; compare outputs of <br /><br /><code>$ rustc --print cfg</code> and <code>$ rustc --print cfg -C target-cpu=native</code><br /><br />to see if the CPU features are being detected correctly</h4>
+        <div>
+          <br />
+          <span><b>Outlook</b>: using an alternative heap allocator (e.g. <code>jemalloc</code>, <code>mimalloc</code>), profile-guided optimization</span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 40-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>40/46</footer>
+      <div class="text-left">
+        <span>&Rightarrow; Minimizing <b>binary size</b></span>
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <div>
+          <h4>Optimization level</h4>
+          <pre><code class="language-toml">[profile.release]
+opt-level = "z"
+
+# Uncomment for vectorization of loops
+# Targets minimal binary size little less aggressively
+# opt-level = "s"</code></pre>
+        </div>
+        <div>
+          <h4>Abort on panic! (disable unwinding the stack)</h4>
+          <pre><code class="language-toml">[profile.release]
+panic = "abort"</code></pre>
+          <div>
+            <span>Goal of unwinding is to safely exit the program by e.g. cleaning up memory</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 41-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>41/46</footer>
+      <div class="text-left">
+        <span>&Rightarrow; Minimizing <b>compile times</b></span>
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <div>
+          <h4>Linking</h4>
+          <div>
+            <span>A big part of compile time is actually linking time (particularly when rebuilding a program after a small change)</span>
+            <br />
+            <span>&Rightarrow; you can try different linkers like <code>lld</code> or <code>mold</code> which are often faster</span>
+          </div>
+          <pre><code class="language-bash">$ RUSTFLAGS="-C link-arg=-fuse-ld=lld" cargo build --release</code></pre>
+        </div>
+        <div>
+          <span><b>Tip for slow running applications</b>: Partially enable compiler optimizations in debug/dev mode (from Bevy)</span>
+          <pre><code class="language-toml">[profile.dev]
+opt-level = 1   # Enable minimal optimization for your code
+[profile.dev.package."*"]
+opt-level = 3   # Enable optimization for dependencies</code></pre>
+          <div>
+            <span><b>Goal</b>: Speeding up incremental builds in semi-optimized (debug) builds</span>
+            <br />
+            <span>&Rightarrow; This slows down clean builds</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 42-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>42/46</footer>
+      <div class="text-left">
+        <h4>Disabling Link-Time optimization to reduce compile times</h4>
+        <pre><code class="language-toml">[profile.release]
+lto = "off"</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <br />
+          <span><b>Outlook</b>: Alternative code generator (e.g. <code>cranelift</code>)</span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 43-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>43/46</footer>
+      <div class="text-left">
+        <h4>Usually we are interested in minimizing runtime</h4>
+        <h4>&Rightarrow; How to start out with benchmarking?</h4>
+        <br />
+      </div>
+      <ul class="incremental text-left">
+        <div>
+          <li>
+            Rust has built-in benchmark tests but they are currently only available in nightly Rust
+          </li>
+        </div>
+        <div>
+          <li>
+            Wall clock benchmarking using <code>std::time::Instant</code>
+          </li>
+          <h4></h4>
+          <br />
+        </div>
+        <div>
+          <li>
+            Outlook: Unofficial crates for fine-graiened measurements with warm-ups to minimize variance<br /><br />e.g. <code>criterion</code>
+          </li>
+        </div>
+      </ul>
+    </section>
+
+    <!--Slide 44-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>44/46</footer>
+      <div class="text-left">
+        <h4>Wall clock benchmarking using <code>std::time::Instant</code></h4>
+        <pre><code class="language-rust">let start = std::time::Instant::now();
+expensive_function();
+let secs = start.elapsed().as_secs_f64();</code></pre>
+      </div>
+      <br />
+      <div class="incremental text-left">
+        <div>
+          <h4>&Rightarrow; Great for manually benchmarking long running functions</h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; May suffer from high variance: Use multiple runs and take the average</h4>
+          <br />
+        </div>
+        <div>
+          <h4>&Rightarrow; Rely on external crates like <code>criterion</code> when necessary</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 45-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>45/46</footer>
+      <div class="text-left">
+        <h4>Rust enum size = Largest variant size + Discriminator (8 bytes)</h4>
+        <pre><code class="language-rust">enum E {
+    A,                    // holds 0  bytes
+    B(i32),               // holds 4  bytes
+    C(u64, u8, u64, u8),  // holds 18 bytes
+    D(Vec&lt;u32&gt;)           // holds 24 bytes
+}</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>Consider boxing large variants in enums</h4>
+          <pre><code class="language-rust">enum E {
+    A,                              // holds 0 bytes
+    B(i32),                         // holds 4 bytes
+    C(Box&lt;(u64, u8, u64, u8)&gt;),     // holds 8 bytes
+    D(Box&lt;Vec&lt;u32&gt;&gt;)                // holds 8 bytes
+}</code></pre>
+        </div>
+        <div>
+          <span>The latter enum type has size 8 + 8, while the former had size 24 + 8.</span>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 46-->
+    <section>
+      <h2 class="slide-title">Benchmarking</h2>
+      <footer>46/46</footer>
+      <div class="text-left">
+        <h4>If you have a <code>Vec</code> that is unlikely to be changed in the future</h4>
+        <pre><code class="language-rust">let v: Vec&lt;u32&gt; = vec![1, 2, 3];</code></pre>
+      </div>
+      <div class="incremental text-left">
+        <div>
+          <h4>You can convert it to a boxed slice</h4>
+          <pre><code class="language-rust">let boxed_slice: Box&lt;[u32]&gt; = Box::new([1, 2, 3]);
+let v: Vec&lt;u32&gt; = boxed_slice.into_vec(); // back to Vec</code></pre>
+        </div>
+        <div>
+          <span>&Rightarrow; This decreases size from 8 (len) + 8 (capacity) + 8 (pointer) bytes to 8 (len) + 8 (capacity) bytes because slices don't hold capacity</span>
+          <br />
+          <br />
+          <span>&Rightarrow; A boxed slice can be converted into a <code>Vec</code> type <b>without cloning or reallocation</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="slide-title">Wrap-Up</h2>
+      <ul class="text-left">
+        <li><b>Unit tests:</b> Test small, isolated pieces of functionality with assertion macros.</li>
+        <li><b>Integration tests:</b> Focus on how different parts of your application interact (public API).</li>
+        <li><b>Documentation tests:</b> Keep documentation examples up-to-date by using inline doc tests.</li>
+        <li><b>Fail fast:</b> Use <code>#[should_panic]</code>, assertions and debug assertions to catch errors early.</li>
+        <li><b>TDD approach:</b> Use it for maintainable code in Rust.</li>
+        <li><b>Clean code:</b> Clean your code using best practices and Rust's official tools like <code>rustfmt</code> and <code>clippy</code></li>
+        <li><b>Benchmarking:</b> Validate performance of what matters, detect hot spots and bottlenecks in your code. Critical to ensure your refactored code enhances/maintains performance.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="slide-title">Resources</h2>
+      <ul class="text-left">
+        <li>https://doc.rust-lang.org/book/</li>
+        <li>https://doc.rust-lang.org/cargo/guide/project-layout.html</li>
+        <li>https://proptest-rs.github.io/proptest/intro.html</li>
+        <li>https://nexte.st/</li>
+        <li>https://github.com/xd009642/tarpaulin</li>
+        <li>https://rust-classes.com/chapter_8_1</li>
+        <li>https://fettblog.eu/slides/idiomatic-rust/</li>
+        <li>https://docs.rs/debug_print/latest/debug_print/</li>
+        <li>https://rust-lang.github.io/rustfmt/?version=v1.6.0&search=</li>
+        <li>https://doc.rust-lang.org/clippy/</li>
+        <li>https://nnethercote.github.io/perf-book/general-tips.html</li>
+        <li>https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html</li>
+        <li>https://benw.is/posts/how-i-improved-my-rust-compile-times-by-seventy-five-percent#cranelift</li>
+        <li>https://bheisler.github.io/criterion.rs/book/getting_started.html</li>
+      </ul>
+    </section>
+
+    <!--Last slide-->
+    <section>
+      <h2 class="slide-title">Next steps</h2>
+      <ul class="text-left">
+        <li>Advanced features</li>
+        <li>Decentralized programming</li>
+        <li>Blockchain development</li>
+        <li>Project, review and next steps</li>
+      </ul>
+    </section>
+
+    <div id="progress-bar"></div>
+
+    <!-- TOC script-->
+    <script>
+      $(function ($) {
+        var toc = $('ul#toc')
+        $('.section-header h2').each(function (index, element) {
+          toc.append('<li>' + $(element).text() + '</li>')
+        });
+      });
+    </script>
+  </body>
+</html>
