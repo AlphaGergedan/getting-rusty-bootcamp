@@ -3,11 +3,20 @@
 You can find the contents of
 - Lecture 3: Idiomatic Rust and functional programming features
 - Lecture 5: Testing
-- Lecture 6: Advanced features in Rust
 
 ## Slides
 
+Lecture 3: Idiomatic Rust and functional programming features
+- [Cropped](https://alphagergedan.github.io/getting-rusty-bootcamp/3-idiomatic-and-funcprog/index_cropped.html)
+- [Uncropped](https://alphagergedan.github.io/getting-rusty-bootcamp/3-idiomatic-and-funcprog/index.html)
+
+Lecture 5: Testing
+- [Cropped](https://alphagergedan.github.io/getting-rusty-bootcamp/5-testing/index_cropped.html)
+- [Uncropped](https://alphagergedan.github.io/getting-rusty-bootcamp/5-testing/index.html)
+
 ## Exercises
+
+Will be soon published.
 
 ## Sources
 
