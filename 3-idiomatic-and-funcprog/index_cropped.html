@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en" charset="utf-8">
+  <head>
+    <title>Lecture 3: Idiomatic Rust and functional programming features</title>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+    <link href="../assets/dz.css" rel="stylesheet"/>
+    <link href="../assets/slides.css" rel="stylesheet"/>
+    <link href="https://{{cdn}}/prismjs@v1.x/themes/prism.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="../assets/dz.js"></script>
+    <link href="../assets/gruvbox-light.css" rel="stylesheet">
+
+    <!-- Uncomment for Gruvbox dark theme  -->
+    <!--<link href="../assets/gruvbox-dark.css" rel="stylesheet">-->
+
+    <!-- Uncomment for the default theme -->
+    <!--<link id="theme-link" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">-->
+
+    <!-- Uncomment for tomorrow theme -->
+    <!--<link id="theme-link" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">-->
+  </head>
+  <body>
+
+    <!--Title Slide-->
+    <section>
+      <h1>
+        Idiomatic Rust
+        <br />
+        <span>and functional programming features</span>
+        <br>
+        <small>Go to <a target="blank" href="https://github.com/AlphaGergedan/getting-rusty-bootcamp">github.com/alphagergedan/getting-rusty-bootcamp</a></small>
+      </h1>
+      <footer>
+        Atamert Rahma @alphagergedan
+      </footer>
+    </section>
+
+    <!--About me Slide-->
+    <section>
+      <h2 class="slide-title">About me</h2>
+      <div class="text-left">
+        <p>I am a doctoral researcher in scientific machine learning at Chair of scientific computing (Chair 05 at TUM School of CIT).</p>
+        <ul>
+          <li>focusing on novel neural network architectures for scientific tasks using randomized algorithms</li>
+          <li>used Rust in implementing and training neural networks, web (backend) and Solana programs (blockchain)</li>
+          <li>links:</li>
+          <ul>
+            <li>
+              <small>homepage at <a target="blank" href="https://www.cs.cit.tum.de/sccs/personen/atamert-rahma/">www.cs.cit.tum.de/sccs/personen/atamert-rahma</a></small>
+            </li>
+            <li>
+              <small>github at <a target="blank" href="https://github.com/alphagergedan/">github.com/alphagergedan</a></small>
+            </li>
+            <li>
+              <small>linkedin at <a target="blank" href="https://www.linkedin.com/in/atamert-rahma-6888a419b/">www.linkedin.com/in/atamert-rahma-6888a419b/</a></small>
+            </li>
+            <li>
+              <small>hobby blog at <a target="blank" href="https://alphagergedan.github.io">alphagergedan.github.io</a></small>
+            </li>
+          </ul>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Slide 1-->
+    <section>
+      <h2 class="slide-title">What is idiomatic coding?</h2>
+      <footer> 1/61 </footer>
+      <div class="text-left">
+        <p class="text-left">
+        <em>
+          "Idiomatic coding means <b>following the conventions of a given language</b>. It is the most <b>concise</b>,
+          <b>convenient</b>, and common way of accomplishing a task in that language, rather than forcing it
+          to work in a way the author is familiar with from a different language."
+        </em>
+        <br />
+        — Tim Mansfield
+        </p>
+      </div>
+      <div class="">
+        <div>
+          <h4>A basic example in JavaScript</h4>
+<pre><code class="language-javascript">if (input !== null && input !== undefined && input !== "") {
+    console.log("Input is valid");
+}
+if (input) {
+    console.log("Input is valid");
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 2-->
+    <section>
+      <h2 class="slide-title">What is idiomatic Rust?</h2>
+      <footer> 2/61 </footer>
+      <div class="text-left">
+        <h4>Idiomatic in Rust is:</h4>
+      </div>
+      <div class="text-left">
+        <ul class="">
+          <li>leveraging Rust's unique features like ownership and reference rules</li>
+          <li>using Rust's built-in features and standard library well</li>
+          <li>writing clean, readable, and maintainable code that feels like Rust</li>
+          <li>relying on standard traits (behavioral patterns) to interact nicely with the ecosystem</li>
+          <li>following guidelines established by the community</li>
+          <li>...and more</li>
+        </ul>
+      </div>
+    </section>
+
+    <!--Slide 3-->
+    <section>
+      <h2 class="slide-title">Today's agenda</h2>
+      <footer>3/61</footer>
+      <div class="text-left">
+          <div>
+          <h4>What are we learning today? Idiomatic..</h4>
+          <br />
+          </div>
+          <ol>
+            <li>Ownership & Borrowing</li>
+            <li>Enums & Structs</li>
+            <li>Traits</li>
+            <li>Error handling</li>
+            <li>Iterators & Closures</li>
+          </ol>
+      </div>
+    </section>
+
+<!--PART 1/5-->
+<!----------------------------------------------------Ownership & Borrowing-->
+<!----------------------------------------------------Ownership & Borrowing-->
+<!----------------------------------------------------Ownership & Borrowing-->
+<!----------------------------------------------------Ownership & Borrowing-->
+<!----------------------------------------------------Ownership & Borrowing-->
+
+    <section>
+      <h2 class="vcenter hcenter">Ownership & Borrowing</h2>
+    </section>
+
+
+    <!-- Slide 4 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>4/61</footer>
+<pre><code class="language-rust">fn greet(user: String) {
+    println!("Hello, {}!", user); // `user` goes out of scope
+}
+fn farewell(user: String) {
+    println!("Bye {}!", user);
+}
+fn main() {
+    let user = String::from("Marty Friedman");
+    greet(user); // Passes ownership to greet
+    farewell(user); // Error: Use of moved value `user`
+}</code></pre>
+      <div class="">
+        <div class="text-left">
+          <h4>Reminder: Rust ensures memory safety through its ownership system:</h4>
+          <ul>
+            <li>Each value in Rust has an <b>owner</b>.</li>
+            <li>There can only be <b>one owner</b> at a time (ownership can be transferred/moved).</li>
+            <li>When the owner goes out of scope, the value will be <b>dropped</b>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>5/61</footer>
+<pre><code class="language-rust">fn greet(user: &String) {
+    println!("Hello, {}!", user);
+}
+fn farewell(user: &String) {
+    println!("Bye {}!", user);
+}
+fn main() {
+    let user = String::from("Marty Friedman");
+    greet(&user); // Immutable borrow
+    farewell(&user); // Immutable borrow
+}</code></pre>
+      <div class="">
+        <div class="text-left">
+          <h4>Reminder: Rules of reference borrowing:</h4>
+          <ul>
+            <li>At any given time, you can have either <b>one mutable</b> reference or <b>any number of immutable</b> references.</li>
+            <li>References must <b>always be valid</b> (they <b>must not outlive</b> their underlying/pointed value).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>6/61</footer>
+      <div class="text-left">
+        <span>What if we have a slice instead?</span>
+        <br>
+        <small>Slices are <b>views</b> into sequence of elements</small>
+      </div>
+      <div class=" text-left">
+<pre><code class="language-rust">fn main() {
+    let user: &str = "Guthrie Govan";
+    greet(&user); // Error: Expected reference `&String`
+    farewell(&user);
+}</code></pre>
+        <span><b>Solution</b>: Prefer borrowed types over borrowing owned type for function arguments to support both.</span>
+      </div>
+    </section>
+
+    <!-- Slide 7 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>7/61</footer>
+<pre><code class="language-rust">fn greet(user: &str) {
+    println!("Hello, {}!", user);
+}
+fn farewell(user: &str) {
+    println!("Bye {}!", user);
+}
+fn main() {
+    let user: &str = "Guthrie Govan";
+    greet(user); farewell(user);
+
+    // This works too!
+    let user = String::from("Marty Friedman");
+    // Note: Use `.as_ref()` to explicitly convert to `&str`
+    // Here: Compiler figures it out!
+    greet(&user); farewell(&user);
+}</code></pre>
+    </section>
+
+    <!-- Slide 8 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>8/61</footer>
+      <h4 class="text-left">Another example</h4>
+<pre><code class="language-rust">fn print_slice(slice: &[i32]) {
+    println!("Slice: {:?}", slice);
+}
+
+fn main() {
+    let arr: [i32; 4] = [1, 2, 3, 4];
+    print_slice(&arr);
+
+    // This works too!
+    let vec: Vec&lt;i32&gt; = vec![5, 6, 7, 8];
+    // Again, compiler figures out `&Vec&lt;i32&gt;` -&gt; `&[i32]`
+    print_slice(&vec);
+}</code></pre>
+    </section>
+
+    <!-- Slide 9 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>9/61</footer>
+      <div class="text-left">
+        <h4>Use slices for sub-data borrowing</h4>
+<pre><code class="language-rust">let data: Vec&lt;i32&gt; = vec![0, 1, 2, 3, 4];
+let slice: &[i32] = &data[1..4]; // &[1,2,3]
+let slice: &[i32] = &data[1..=4]; // &[1,2,3,4]</code></pre>
+      </div>
+      <div class=" text-left">
+        <div>
+          <h4>Prefer immutable references unless mutation is neccessary</h4>
+<pre><code class="language-rust">let data = {
+    let mut data: Vec&lt;i32&gt; = vec![1, 2, 3];
+    data.push(4); // Requires mutation
+    data
+};
+
+// Here `data` is immutable
+let sum: i32 = data.iter().sum(); // sum is 10</code></pre>
+        </div>
+      </div>
+      <h4 class="text-left"></h4>
+    </section>
+
+    <!-- Slide 10 -->
+    <section>
+      <h2 class="slide-title">Ownership & Borrowing</h2>
+      <footer>10/61</footer>
+      <div class="text-left">
+        <h4>Avoid unneccessary cloning</h4>
+<pre><code class="language-rust">let s = String::from("hello");
+println!("Hello {}", &s); // Borrowing avoids cloning</code></pre>
+      </div>
+      <div class=" text-left">
+        <div>
+          <h4>Concatenate strings with <code>format!</code></h4>
+<pre><code class="language-rust">let name: &str = "Jason Becker";
+let mut hello_name = String::from("Hello ");
+hello_name.push_str(name);
+hello_name.push_str('!');
+
+// Better/easier with `format!`
+let hello_name: String = format!("Hello {}!", name);</code></pre>
+        </div>
+      </div>
+      <h4 class="text-left"></h4>
+    </section>
+
+<!--PART 2/5-->
+<!-------------------------------------------------------------------------------------ENUMS-->
+<!-------------------------------------------------------------------------------------ENUMS-->
+<!-------------------------------------------------------------------------------------ENUMS-->
+<!-------------------------------------------------------------------------------------ENUMS-->
+<!-------------------------------------------------------------------------------------ENUMS-->
+
+    <section>
+      <h2 class="vcenter hcenter">Enums & Structs</h2>
+    </section>
+
+    <!--Slide 11-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>11/61</footer>
+<pre><code class="language-rust">enum Direction {
+    North, South,
+    East, West,
+}
+
+fn main() {
+    let dir = Direction::North;
+    match dir {
+        Direction::North =&gt; println!("Going North"),
+        _ =&gt; println!("Not going North")
+    }
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>Rust enums are:</h4>
+          <ul>
+            <li>useful for defining a type with a fixed set of <b>variants</b></li>
+            <li>enums are structs, i.e., they can implement <b>traits and methods</b></li>
+            <li>enums can <b>carry data</b></li>
+            <li>perfect for <b>state machines</b> and <b>error handling</b></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 12-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>12/61</footer>
+      <h4 class="text-left">Enums can carry data</h4>
+<pre><code class="language-rust">enum Color {
+    RGB(u8, u8, u8),
+    RGBA(u8, u8, u8, u8),
+}
+
+fn main() {
+    let red = Color::RGB(255, 0, 0);
+
+    // Error! Use tuple structs or pattern matching!
+    println!("Color: RGB({red.0}, {red.1}, {red.2})");
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>Use pattern matching &Rightarrow;</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 13-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>13/61</footer>
+      <h4 class="text-left">Accessing fields of enums</h4>
+<pre><code class="language-rust">enum Color {
+    RGB(u8, u8, u8),
+    RGBA(u8, u8, u8, u8),
+}
+fn main() {
+    let red = Color::RGB(255, 0, 0);
+    match red {
+        Color::RGB(r, g, b) =&gt; println!(...),
+        Color::RGBA(r, g, b, a) =&gt; println!(...),
+    }
+
+    // To only match `Color::RGB`
+    if let Color::RGB(r, g, b) = red {
+        println!("Color: RGB({r}, {g}, {b})");
+    }
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>Enums can also carry other structs &Rightarrow;</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 14-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>14/61</footer>
+      <h4 class="text-left">Example: bevy game engine (bevy-0.15.0)</h4>
+<pre><code class="language-rust">enum Color {
+    Srgba(Srgba),
+    LinearRgba(LinearRgba),
+    // [...]
+}
+
+struct Srgba {
+    red: f32,
+    green: f32,
+    blue: f32,
+    alpha: f32,
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>Enums can hold a struct type inside <br />&Rightarrow; makes your code more readable when your struct becomes more complex</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 15-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>15/61</footer>
+      <pre><code class="language-rust">enum AccountState {
+    Active { user: String, balance: u32 },
+    Suspended { user: String },
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <span>What if we want to convert <code>Active</code> variant to <code>Suspended</code> variant if balance is zero?</span>
+          <br />
+          <br />
+        </div>
+        <div class="text-left">
+          <h4>We can do this without cloning</h4>
+          <pre><code class="language-rust">fn deactivate(accs: &mut AccountState) {
+    if let AccountState::Active { user, balance: 0 } = accs {
+        // Note: We do not own `user`
+        *accs = AccountState::Suspended {
+            user: std::mem::take(user)
+        };
+    }
+}</code></pre>
+
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 16-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>16/61</footer>
+      <h4 class="text-left">The newtype pattern (wrapper around a type)</h4>
+<pre><code class="language-rust">// Tuple struct
+struct Meters(f64); // The newtype pattern
+
+// Type alias
+type Meters = f64; // Does not create a custom type</code></pre>
+      <ul class="text-left ">
+        <li>A (creational) design pattern in Rust</li>
+        <li>Used to create <b>new, distinct types</b> with custom behavior (by implementing traits and methods)</li>
+        <li>Allows defining custom behavior for the new type without affecting the original type</li>
+        <li>Use the newtype idiom instead of <code>type</code>:</li>
+        <ul>
+          <li><code>type</code> creates an alias but doesn't enforce type safety (type Meters = f64; is still considered as f64)</li>
+          <li>newtype idiom allows custom behavior implementations</li>
+        </ul>
+      </ul>
+    </section>
+
+    <!--Slide 17-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>17/61</footer>
+      <h4 class="text-left">Use explicit field names in enums and structs if it makes more sense</h4>
+<pre><code class="language-rust">struct Point { x: f64, y: f64, }
+
+struct Rectangle {
+    top_left: Point,
+    bottom_right: Point,
+}
+
+enum Message {
+    Quit,
+    Shift { x: f64, y: f64 },
+    ChangeColor(Color),
+    Write(String),
+    // [...]
+}</code></pre>
+    </section>
+
+    <!--Slide 18-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>18/61</footer>
+<pre><code class="language-rust">impl Rectangle {
+    fn shift(&mut self, dx: f64, dy: f64) {
+        self.top_left.x += dx;
+        self.top_left.y += dy;
+        self.bottom_right.x += dx;
+        self.bottom_right.y += dy;
+    }
+}
+
+fn main() {
+    let top_left = Point { x: 0., y: 1. };
+    let bottom_right = Point { x: 1., y: 0. };
+    let mut rect = Rectangle { top_left, bottom_right };
+    let msg = Message::Shift { x: 1., y: 1. };
+    if let Message::Shift { x: dx, y: dy } = msg {
+        rect.shift(dx, dy);
+    }
+}</code></pre>
+    </section>
+
+    <!--Slide 19-->
+    <section>
+      <h2 class="slide-title">Enums & Structs</h2>
+      <footer>19/61</footer>
+      <div class="text-left">
+        <h4>Constructor convention with <code>new</code></h4>
+      </div>
+<pre><code class="language-rust">impl Rectangle {
+    fn new(top_left: Point, bottom_right: Point) -&gt; Self {
+        Self { top_left, bottom_right }
+    }
+}
+
+fn main() {
+    let top_left = Point { x: 0., y: 1. };
+    let bottom_right = Point { x: 1., y: 0. };
+    let rect = Rectangle::new(top_left, bottom_right);
+}</code></pre>
+    </section>
+
+<!--PART 3/5-->
+<!-----------------------------------------------------------TRAITS -->
+<!-----------------------------------------------------------TRAITS -->
+<!-----------------------------------------------------------TRAITS -->
+<!-----------------------------------------------------------TRAITS -->
+<!-----------------------------------------------------------TRAITS -->
+
+    <section>
+      <h2 class="vcenter hcenter">Traits</h2>
+    </section>
+
+    <!-- Slide 20 -->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>20/61</footer>
+      <div class="text-left">
+        <span>Traits define shared behavior that types can implement.</span>
+        <br>
+        <small>Similar to interfaces in other languages. They 'enable' polymorphism in Rust.</small>
+      </div>
+      <div class=" text-left">
+<pre><code class="language-rust">trait Area {
+    fn area(&self) -&gt; f64;
+}
+
+impl Area for Rectangle {
+    fn area(&self) -&gt; f64 {
+        let width = self.bottom_right.x - self.top_left.x;
+        let height = self.top_left.y - self.bottom_right.y;
+        width * height
+    }
+}
+
+// Other structs can implement this trait
+</code></pre>
+      </div>
+    </section>
+
+    <!-- Slide 21 -->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>21/61</footer>
+      <div class="text-left">
+        <h4>Derive useful traits (derivable traits)</h4>
+        <pre><code class="language-rust">#[derive(Debug, Default, Copy, Clone, PartialEq, PartialOrd)]
+struct Point { x: f64, y: f64 }</code></pre>
+        <ul class="">
+          <li><b>Debug</b> enables formatting for debugging using <code>{:?}</code>.</li>
+          <li><b>Default</b> provides a default value via <code>Point::default()</code>.</li>
+          <li><b>Copy</b> allows inexpensive bitwise copying of values without moving ownership.</li>
+          <li><b>Clone</b> allows (expensive) explicit duplication of an object via <code>.clone()</code>.</li>
+          <li><b>PartialEq</b> enables <code>==</code> and <code>!=</code> for comparisons.<br /><small>symmetric and transitive but may not be reflexive (e.g., <code>NaN != NaN</code>)</small></li>
+          <li><b>Eq</b> extends <code>PartialEq</code> by adding reflexivity (<code>x == x</code> for all x).<br /><small>e.g., <code>HashMap</code> keys</small></li>
+          <li><b>PartialOrd</b> allows <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code> and <code>&lt;=</code>.<br /><small>not all pairs of values must be comparable (e.g., <code>f32</code>)</small></li>
+          <li><b>Ord</b> extends <code>PartialOrd</code> by requiring that all pairs are comparable.<br /><small>exactly one of <code>x &lt; y</code>, <code>x &gt; y</code>, or <code>x == y</code> is true for all <code>x</code> and <code>y</code></small></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Slide 22 -->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>22/61</footer>
+      <div class="text-left">
+        <h4>Default constructors can be implemented with the <code>Default</code> trait</h4>
+        <pre><code class="language-rust">impl Default for Rectangle {
+    fn default() -&gt; Self {
+        Self {
+            top_left: Point { x: 0., y: 1. },
+            bottom_right: Point { x: 1., y: 0. }
+        }
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Slide 23 -->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>23/61</footer>
+      <div class="text-left">
+        <h4>Partial initialization with the <code>Default</code> trait</h4>
+        <pre><code class="language-rust">fn main() {
+    let rect = Rectangle {
+        bottom_right: Point { x: 2., y: 0. },
+        ..Default::default()
+    };
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 24-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>24/61</footer>
+      <div class="text-left">
+        <span>The code that results from monomorphization is doing <b>static dispatch</b>.</span>
+        <small>Monomorphization: The process of turning generic code into specified code by filling in the concrete types that are used when compiled for runtime efficiency.</small>
+      </div>
+      <div class="text-left ">
+        <div>
+          <h4>&Rightarrow; creating a copy of the code for each type it is used with bloats the code, costs compile time and cache usage.</h4>
+          <br />
+        </div>
+        <div>
+          <h4>Instead we can use dynamic dispatch via <code>dyn</code></h4>
+          <pre><code class="language-rust">let readable: &mut dyn std::io::Read = if arg == "-" {
+    &mut std::io::stdin() // of `Stdin` type
+} else {
+    &mut std::fs::File::open(arg)? // of `File` type
+};
+let mut buffer = String::new();
+readable.read_to_string(&mut buffer)?;</code></pre>
+        </div>
+        <div>
+          <h4>The actual type of <code>readable</code> is resolved during runtime.</h4>
+          <small>Rust will figure out which concrete type's <code>read</code> implementation to invoke</small>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 25-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>25/61</footer>
+      <pre><code class="language-rust">enum Shape {
+    Circle { center: Point, radius: f64 },
+    Rectangle { top_left: Point, bottom_right: Point }
+}
+impl Area for Shape {
+    fn area(&self) -&gt; f64 {
+        match self {
+            Shape::Circle { center, radius } =&gt; {
+                std::f64::consts::PI * radius * radius
+            },
+            Shape::Rectangle { top_left, bottom_right } =&gt; {
+                let width = bottom_right.x - top_left.x;
+                let height = top_left.y - bottom_right.y;
+                width * height
+            }
+        }
+    }
+}</code></pre>
+    </section>
+
+    <!--Slide 26-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>26/61</footer>
+      <h4 class="text-left">The shape type can be resolved during runtime</h4>
+      <pre><code class="language-rust">struct Rectangle { top_left: Point, bottom_right: Point, }
+struct Circle { center: Point, radius: f64, }
+
+impl Area for Rectangle {
+    fn area(&self) -&gt; f64 {
+        let width = self.bottom_right.x - self.top_left.x;
+        let height = self.top_left.y - self.bottom_right.y;
+        width * height
+    }
+}
+impl Area for Circle {
+    fn area(&self) -&gt; f64 {
+        f64::consts::PI * self.radius * self.radius
+    }
+}</code></pre>
+      <div class="text-left ">
+        <span>Example: <code class="language-rust">let shapes: Vec&lt;&dyn Area&gt; = vec![&circle, &rect];</code></span>
+      </div>
+    </section>
+
+    <!--Slide 27-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>27/61</footer>
+      <h4 class="text-left">Conversion traits</h4>
+      <pre><code class="language-rust">let name = String::from("ata");        // From&lt;&str&gt;
+let name_slice: &str = name.as_ref();  // AsRef&lt;&str&gt;
+let name_bytes: &[u8] = name.as_ref(); // AsRef&lt;&[u8]&gt;
+println!("{}", name_slice);   // ata
+println!("{:?}", name_bytes); // [97, 116, 97]</code></pre>
+      <ul class="text-left ">
+        <li><code>From&lt;T&gt;</code>: Converts from type `T` to the target type `Self`.</li>
+        <li><code>TryFrom&lt;T&gt;</code>: Converts from type `T` to the target type `Self`, but may fail.<br /> <small>returns a `Result`</small></li>
+        <li><code>AsRef&lt;T&gt;</code>: Provides a cheap, reference-to-reference conversion from `&Self` to `&T`.</li>
+        <li><code>AsMut&lt;T&gt;</code>: Provides a cheap, mutable reference-to-reference conversion from `&mut Self` to `&mut T`.</li>
+        <div>
+          <h4><code class="language-rust">From&lt;T&gt; for U</code> implies <code class="language-rust">Into&lt;U&gt; for T</code> &Rightarrow; you should prefer implementing the <code class="language-rust">From</code> trait</h4>
+        </div>
+      </ul>
+    </section>
+
+    <!--Slide 28-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>28/61</footer>
+      <h4 class="text-left">Examples from the standard library</h4>
+      <ul class="text-left ">
+        <li><code class="language-rust">From&lt;u16&gt;</code> is implemented for <code class="language-rust">u32</code> because a smaller integer can always be converted to a bigger integer.</li>
+        <li><code class="language-rust">From&lt;u32&gt;</code> is NOT implemented for <code class="language-rust">u16</code> because the conversion may not be possible if the integer is too big.</li>
+        <li><code class="language-rust">TryFrom&lt;u32&gt;</code> is implemented for <code class="language-rust">u16</code> and returns an error if the integer is too big to fit in.</li>
+      </ul>
+    </section>
+
+    <!--Slide 29-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>29/61</footer>
+      <h4 class="text-left">Reminder: Deriving the <code>Debug</code> trait provides printing via <code>{:?}</code></h4>
+      <pre><code class="language-rust">#[derive(Debug)]
+struct Point { x: f64, y: f64 }
+
+fn main() {
+    let p = Point { x: 0., y: 1. };
+    println!("{:?}", p); // Point { x: 0.0, y: 1.0 }
+    println!("{}", p);   // Error: Implement `Display` trait
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>How can we `display` objects in a more human-readable format?</h4>
+          <br />
+        </div>
+        <h4>&Rightarrow; implement the <code>Display</code> trait</h4>
+      </div>
+    </section>
+
+    <!--Slide 30-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>30/61</footer>
+      <h4 class="text-left">Implementing <code>Display</code> for <code>Point</code></h4>
+      <pre><code class="language-rust">impl std::fmt::Display for Point {
+    fn fmt(&self, f: &mut std::fmt::Formatter&lt;'_&gt;)
+        -&gt; std::fmt::Result {
+        write!(f, "({},{})", self.x, self.y)
+    }
+}
+
+fn main() {
+    let p = Point { x: 0., y: 1. };
+    println!("{:?}", p); // Point { x: 0.0, y: 1.0 }
+    println!("{}", p);   // (0,1)
+}</code></pre>
+
+      <div class="text-left ">
+        <h4>Outlook: See the <code>derive_more</code> crate to workaround boilerplate code.</h4>
+      </div>
+    </section>
+
+    <!--Slide 31-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>31/61</footer>
+      <h4 class="text-left">Overridable trait implementation</h4>
+      <pre><code class="language-rust">trait Area {
+    fn area(&self) -&gt; f64 {
+        0.
+    }
+}
+
+struct Point { x: f64, y: f64, }
+
+impl Area for Point {} // Uses the default implementation</code></pre>
+      <div class="text-left ">
+        <h4>Structs can still implement the trait and override the default implementation (i.e., this does not affect the implementation for the <code>Rectangle</code> and <code>Circle</code> structs).</h4>
+      </div>
+    </section>
+
+    <!--Slide 32-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>32/61</footer>
+      <h4 class="text-left">Traits as parameters</h4>
+      <pre><code class="language-rust">fn print_area&lt;T: Area&gt;(shape: &T) {
+    let area = shape.area();
+    println!("Area: {}", area);
+}</code></pre>
+      <div class=" text-left">
+        <div>
+          <h4>Prefer the trait bound syntax sugar for fewer parameters</h4>
+          <pre><code class="language-rust">fn print_area(shape: &impl Area) {
+    let area = shape.area();
+    println!("Area: {}", area);
+}</code></pre>
+        </div>
+        <h4>&Rightarrow; Similarly you can also return types that implement certain traits as long as you are returning a single type</h4>
+        <h4>&Rightarrow; For returning possibly different types that implement the same trait you can dynamic dispatch</h4>
+      </div>
+    </section>
+
+    <!--Slide 33-->
+    <section>
+      <h2 class="slide-title">Traits</h2>
+      <footer>33/61</footer>
+      <h4 class="text-left">For multiple trait bounds use <code>where</code> clauses</h4>
+      <pre><code class="language-rust">fn display_and_print_areas&lt;T, U&gt;(shape1: &T, shape2: &U)
+where
+    T: Area + std::fmt::Display,
+    U: Area + std::fmt::Display,
+{
+    let area1 = shape1.area();
+    let area2 = shape2.area();
+    println!("Shape {} has area {}", shape1, area1);
+    println!("Shape {} has area {}", shape2, area2);
+}</code></pre>
+      <div class=" text-left">
+        <h4>&Rightarrow; Trait bound information is separated from the function signature</h4>
+        <h4>&Rightarrow; The function signature is easier to read!</h4>
+      </div>
+    </section>
+
+<!--part 4/5-->
+<!-----------------------------------------ERROR HANDLING-->
+<!-----------------------------------------ERROR HANDLING-->
+<!-----------------------------------------ERROR HANDLING-->
+<!-----------------------------------------ERROR HANDLING-->
+<!-----------------------------------------ERROR HANDLING-->
+
+    <section>
+      <h2 class="vcenter hcenter">Error handling</h2>
+    </section>
+
+    <!--Slide 34-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>34/61</footer>
+      <h4 class="text-left">In rust we have no <code>undefined</code>, <code>null</code>, <code>exception</code>...</h4>
+      <br />
+      <h4 class="text-left">In Rust:</h4>
+      <ul class=" text-left">
+        <li>For values that might be absent:<br />
+          <pre><code class="language-rust">enum Option&lt;T&gt; {
+    None,     // no value is available
+    Some(T),  // value is available
+}</code></pre>
+        </li>
+        <li>For operations that might fail:<br />
+          <pre><code class="language-rust">enum Result&lt;T, E&gt; {
+    Ok(T),    // operation is successful
+    Err(E),   // operation returned an error
+}</code></pre>
+        </li>
+        <div>
+          <h4>Key principle: Avoid panicking in recoverable scenarios; handle errors and none types explicitly.</h4>
+        </div>
+      </ul>
+    </section>
+
+    <!--Slide 35-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>35/61</footer>
+      <h4 class="text-left">Understanding <code>Option&lt;T&gt;</code></h4>
+      <pre><code class="language-rust">fn find_user(id: u32) -&gt; Option&lt;String&gt; {
+    if id == 1 {
+        Some(String::from("Alice"))
+    } else {
+        None
+    }
+}</code></pre>
+    </section>
+
+    <!--Slide 36-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>36/61</footer>
+      <h4 class="text-left">Handling <code>Option&lt;T&gt;</code></h4>
+      <br />
+      <ul class=" text-left">
+        <li>
+          Ignore <code>None</code>:<br />
+          <pre><code class="language-rust">if let Some(user) = find_user(id) { ... }</code></pre>
+        </li>
+        <li>
+          Panic if <code>None</code>: <br />
+          <pre><code class="language-rust">let user = find_user(id).unwrap();
+// Prefer `.expect` over `.unwrap`
+let user = find_user(id).expect("User must exist");</code></pre>
+        </li>
+        <li>
+          Provide a default value if <code>None</code>: <br />
+          <pre><code class="language-rust">let user = find_user(id)
+    .unwrap_or(String::from("Guest"));</code></pre>
+        </li>
+      </ul>
+    </section>
+
+    <!--Slide 37-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>37/61</footer>
+      <h4 class="text-left">Optional function arguments</h4>
+      <pre><code class="language-rust">fn foo(a: Option&lt;i32&gt;, b: Option&lt;i32&gt;) {
+    if let Some(a) = a {
+        println!("a {}", a);
+    }
+    if let Some(b) = b {
+        println!("b {}", b);
+    }
+}
+
+fn main() {
+    foo(None, None);
+    foo(Some(1), None); // Some(_) is required
+}</code></pre>
+      <div class="text-left ">
+        <h4>How to get rid of the <code>Some</code>? It may too verbose for the user.</h4>
+      </div>
+    </section>
+
+    <!--Slide 38-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>38/61</footer>
+      <h4 class="text-left">Optional function arguments with generics and trait bounds</h4>
+      <pre><code class="language-rust">fn foo2&lt;T, U&gt;(a: T, b: U)
+where
+    T: Into&lt;Option&lt;i32&gt;&gt;,
+    U: Into&lt;Option&lt;i32&gt;&gt;,
+{
+    if let Some(a) = a.into() {
+        println!("a {}", a);
+    }
+    if let Some(b) = b.into() {
+        println!("b {}", b);
+    }
+}
+fn main() {
+    foo(None, None);
+    foo(1, None);   // Some(_) is not explicitly required
+}</code></pre>
+    </section>
+
+    <!--Slide 39-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>39/61</footer>
+      <h4 class="text-left">Understanding <code>Error&lt;T, E&gt;</code></h4>
+      <pre><code class="language-rust">fn divide(a: f64, b: f64) -&gt; Result&lt;f64, String&gt; {
+    if b == 0. {
+        Err(String::from("Cannot divide by zero"))
+    } else {
+        Ok(a / b)
+    }
+}</code></pre>
+    </section>
+
+    <!--Slide 40-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>40/61</footer>
+      <h4 class="text-left">Handling <code>Error&lt;T, E&gt;</code> (again using utility functions)</h4>
+      <br />
+      <ul class=" text-left">
+        <li>
+          Ignore <code>Err</code>:<br />
+          <pre><code class="language-rust">if let Ok(val) = divide(a,b) { ... }</code></pre>
+        </li>
+        <li>
+          Panic if <code>Err</code>: <br />
+          <pre><code class="language-rust">let val = divide(a,b).unwrap();
+// Prefer `.expect` over `.unwrap`
+let val = divide(a,b).expect("Division must succeed");</code></pre>
+        </li>
+        <li>
+          Provide a default value if <code>Err</code>: <br />
+          <pre><code class="language-rust">// Same as `.unwrap_or(0.)` for f64
+let val = divide(a,b).unwrap_or_default();</code></pre>
+        </li>
+      </ul>
+    </section>
+
+    <!--Slide 41-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>41/61</footer>
+      <h4 class="text-left">Depending on The error type <code>E</code> in <code>Result&lt;T, E&gt;</code> you can propagate the error</h4>
+      <pre><code class="language-rust">fn read_user(path: &str) -&gt; Result&lt;String, std::io::Error&gt; {
+    let f = std::fs::File::open(path);
+    let mut f = match f {
+        Ok(file) =&gt; file,
+        Err(e) =&gt; return Err(e),
+    };
+
+    let mut buffer = String::new();
+    match f.read_to_string(&mut buffer) {
+        Ok(_) =&gt; Ok(buffer),
+        Err(e) =&gt; Err(e)
+    }
+}</code></pre>
+    </section>
+
+    <!--Slide 42-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>42/61</footer>
+      <div class="text-left">
+        <h4>Use the <code>?</code> operator to propagate the error</h4>
+        <small>more developer friendly than explicitly doing the pattern matching</small>
+      </div>
+      <pre><code class="language-rust">fn read_user(path: &str) -&gt; Result&lt;String, std::io::Error&gt; {
+    let mut f = std::fs::File::open(path)?;
+
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer)?;
+    Ok(buffer)
+}</code></pre>
+      <div class=" text-left">
+        <h4>&Rightarrow; Deal with the error one level above</h4>
+      </div>
+    </section>
+
+    <!--Slide 43-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>43/61</footer>
+      <div class="text-left">
+        <h4>Example: Implementing <code>FromStr</code> for <code>Point</code> struct</h4>
+        <pre><code class="language-rust">impl std::str::FromStr for Point {
+    type Err = std::num::ParseFloatError;
+
+    fn from_str(s: &str) -&gt; Result&lt;Self, Self::Err&gt; {
+        let coords: Vec&lt;&str&gt; = s
+            .trim_matches(|p| p == '(' || p == ')')
+            .split(',')
+            .collect();
+
+        let x: f64 = coords[0].parse()?;
+        let y: f64 = coords[1].parse()?;
+
+        Ok(Self { x, y })
+    }
+}</code></pre>
+      </div>
+      <div class="text-left ">
+        <h4><code>FromStr</code> is often used through <code>str</code>'s <code>parse</code> method</h4>
+      </div>
+    </section>
+
+    <!--Slide 44-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>44/61</footer>
+      <div class="text-left">
+        <span><b>Problem</b>: Reading a file's content and parsing it into a number.</span>
+      </div>
+      <br />
+      <div class=" text-left">
+        <div>
+          <h4>Errors because <code>parse</code> returns <code>Result&lt;_, std::num::ParseIntError&gt;</code></h4>
+          <pre><code class="language-rust">fn read_number(path: &str) -&gt; Result&lt;i32, std::io::Error&gt; {
+    let mut f = std::fs::File::open(path)?;
+
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer)?;
+
+    let parsed_num = buffer.trim().parse::&lt;i32&gt;()?; // Error
+    Ok(parsed_num)
+}</code></pre>
+        </div>
+        <h4>&Rightarrow; Solution: Map different <code>Err</code> types to <code>String</code></h4>
+      </div>
+    </section>
+
+    <!--Slide 45-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>45/61</footer>
+      <div class="text-left">
+        <h4>Map different <code>Err</code> types to <code>String</code></h4>
+        <pre><code class="language-rust">fn read_number(path: &str) -&gt; Result&lt;i32, String&gt; {
+    let mut f = std::fs::File::open(path)
+        .map_err(|e| format!("Failed to open file: {}", e))?;
+
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer)
+        .map_err(|e| format!("Failed to read file: {}", e))?;
+
+    let parsed_num = buffer.trim().parse::&lt;i32&gt;()
+        .map_err(|e| format!("Failed to parse: {}", e))?;
+    Ok(parsed_num)
+}</code></pre>
+      </div>
+      <div class=" text-left">
+        <span><b>Better</b>: Define custom error types for your application!</span>
+      </div>
+    </section>
+
+    <!--Slide 46-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>46/61</footer>
+      <div class="text-left">
+        <span>You can define custom errors using enums, structs, nested types...</span>
+        <br />
+      </div>
+      <div class=" text-left">
+        <div>
+          <h4>Enum example</h4>
+          <pre><code class="language-rust">#[derive(Debug)]
+enum FileReadError {
+    FileOpen(std::io::Error),
+    Parse(std::num::ParseIntError),
+}
+
+// To be compatible with the ecosystem
+impl std::error::Error for FileReadError { }</code></pre>
+        </div>
+        <h4>Implementing the <code>std::error::Error</code> trait makes your error type idiomatic and compatible with Rust's standard library.</h4>
+      </div>
+    </section>
+
+    <!--Slide 47-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>47/61</footer>
+      <div class="text-left">
+        <h4>Implement <code>Display</code></h4>
+        <pre><code class="language-rust">impl std::fmt::Display for FileReadError {
+    fn fmt(&self, f: &mut std::fmt::Formatter&lt;'_&gt;)
+        -&gt; std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 48-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>48/61</footer>
+      <div class="text-left">
+        <h4>Implement <code>From&lt;T&gt;</code> for all the wrapped error types</h4>
+        <pre><code class="language-rust">impl From&lt;std::io::Error&gt; for FileReadError {
+    fn from(e: std::io::Error) -&gt; Self {
+        FileReadError::FileOpen(e)
+    }
+}
+
+impl From&lt;std::num::ParseIntError&gt; for FileReadError {
+    fn from(e: std::num::ParseIntError) -&gt; Self {
+        FileReadError::Parse(e)
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 49-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>49/61</footer>
+      <div class="text-left">
+        <h4>Using your custom error type</h4>
+        <pre><code class="language-rust">fn read_number(path: &str) -&gt; Result&lt;i32, FileReadError&gt; {
+    let mut f = std::fs::File::open(path)?;
+
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer)?;
+
+    let parsed_num = buffer.trim().parse()?;
+    Ok(parsed_num)
+}</code></pre>
+      </div>
+      <div class=" text-left">
+        <h4>&Rightarrow; Great, but too much boilerplate code we had to go through...</h4>
+        <h4>&Rightarrow; Use <code>thiserror</code> to skip the headache</h4>
+      </div>
+    </section>
+
+    <!--Slide 50-->
+    <section>
+      <h2 class="slide-title">Error handling</h2>
+      <footer>50/61</footer>
+      <div class="text-left">
+        <h4><code>thiserror</code> provides you useful macros</h4>
+        <pre><code class="language-rust">#[derive(Debug, thiserror::Error)]
+enum FileReadError {
+    #[error("Failed to open file: {0}")]
+    FileError(#[from] std::io::Error),
+    #[error("Failed to parse number: {0}")]
+    ParseError(#[from] std::num::ParseIntError),
+}</code></pre>
+      </div>
+      <div class=" text-left">
+        <h4><code>thiserror</code> is transparent: It behaves like a handwritten error implementation.</h4>
+      </div>
+    </section>
+
+    <!--Slide 52-->
+    <!--<section>-->
+      <!--<h2 class="slide-title">Error handling</h2>-->
+      <!--<footer>52/61</footer>-->
+      <!--<h4 class="text-left">Best practices summary:</h4>-->
+      <!--<br />-->
+      <!--<ul class=" text-left">-->
+        <!--<li>Prefer <code>Result</code> over <code>panic!</code> for recoverable errors.</li>-->
+        <!--<li>Use <code>.expect(msg)</code> in places where your code state is in a bad (unrecoverable) state.</li>-->
+        <!--<li>Use <code>?</code> for error propagation in functions returning <code>Result</code>.</li>-->
+        <!--<li>Prefer defining custom error types for your application instead of propagating the library error types.</li>-->
+        <!--<li>Leverage libraries (crates) like <code>thiserror</code> for defining custom errors.</li>-->
+      <!--</ul>-->
+    <!--</section>-->
+
+<!--part 5/5-->
+<!--------------------------------------ITERATORS & CLOSURES-->
+<!--------------------------------------ITERATORS & CLOSURES-->
+<!--------------------------------------ITERATORS & CLOSURES-->
+<!--------------------------------------ITERATORS & CLOSURES-->
+
+    <section>
+      <h2 class="vcenter hcenter">Iterators & Closures</h2>
+    </section>
+
+    <!--Slide 51-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>51/61</footer>
+      <h4 class="text-left">Remember <code>for</code> loop in Rust</h4>
+      <pre><code class="language-rust">for x in 0..4 {     // x in {0, 1, 2, 3}
+    println!("{}", x);
+}</code></pre>
+      <div class=" text-left">
+        <div>
+          <h4 class="text-left">Range <code>0..4</code> are 'iterators'. Iterators provide the <code>.next</code> method</h4>
+          <pre><code class="language-rust">let mut range = 0..4;
+loop {
+    match range.next() {
+        Some(x) =&gt; println!("{}", x),
+        None =&gt; break,
+    }
+}</code></pre>
+        </div>
+        <div>
+          <h4>&Rightarrow; Writing your own iterator involves implementing the <code>Iterator</code> trait</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 52-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>52/61</footer>
+      <h4 class="text-left">Iterators are abstractions for sequentially accessing elements of a collection.</h4>
+      <ul class=" text-left">
+        <div>
+          <li>Traits</li>
+          <ul>
+            <li><code>Iterator</code>: core trait with the method <code>.next()</code></li>
+            <li><code>IntoIterator</code>: Enables conversion into an iterator</li>
+            <li><code>ExactSizeIterator</code>: Additional trait to provide <code>.len()</code> information</li>
+            <li><code>DoubleEndedIterator</code>: Enables reverse iteration with <code>.next_back()</code></li>
+          </ul>
+        </div>
+        <div>
+          <li>Key features</li>
+          <ul>
+            <li><b>Laziness</b>: Iterators do nothing until consumed</li>
+            <li><b>Adapters</b>: Allow declarative chain transformations</li>
+          </ul>
+        </div>
+        <div>
+          <li>There are usually three forms of iteration</li>
+          <ul>
+            <li><code>.iter()</code>, which iterates over <code>&T</code></li>
+            <li><code>.iter_mut()</code>, which iterates over <code>&mut T</code></li>
+            <li><code>.into_iter()</code>, which iterates over <code>T</code></li>
+          </ul>
+        </div>
+      </ul>
+    </section>
+
+    <!--Slide 53-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>53/61</footer>
+      <h4 class="text-left">Implementing an iterator</h4>
+      <pre><code class="language-rust">struct Counter { count: usize }
+impl Iterator for Counter {
+    type Item = usize;
+    fn next(&mut self) -&gt; Option&lt;Self::Item&gt; {
+        self.count += 1;
+        Some(self.count)
+    }
+}</code></pre>
+      <div class=" text-left">
+        <pre><code class="language-rust">let counter = Counter { count: 0 };
+let mut it = counter.into_iter();
+it.next(); // Some(1)
+
+let counter = Counter { count: 0 };
+// Consumes `counter` and calls .next() till None is returned
+for c in counter { ... }</code></pre>
+      </div>
+    </section>
+      <!--<h4>Iterators do not have to be finite. <code>let numbers = 0..;</code> and then do <code>let five_numbers = numbers.take(5);</code> and iterate over those 5 numbers</h4>-->
+
+    <!--Slide 54-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>54/61</footer>
+      <h4 class="text-left">Do not use 'C-style' <code>for</code> loop</h4>
+      <pre><code class="language-rust">let nums = vec![1, 2, 3];
+for idx in 0..nums.len() {
+    println!("{}", nums[idx]); // unnecessary bounds check
+}</code></pre>
+      <div class="text-left ">
+        <div>
+          <h4>Using iterators</h4>
+          <pre><code class="language-rust">for num in &nums {
+    println!("{}", *num); // no bounds check but still safe
+}</code></pre>
+        </div>
+        <div>
+          <h4>Use <code>.enumerate</code> if you need the index</h4>
+          <pre><code class="language-rust">for (idx, num) in nums.iter().enumerate() {
+    println!("idx {}: {}", idx, num);
+}</code></pre>
+        </div>
+      </div>
+    </section>
+      <!--<h4 class="text-left">Often, you may want to iterate over a collection without consuming it</h4>-->
+
+    <!--Slide 55-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>55/61</footer>
+      <div class="text-left">
+        <span class="text-left"><b>Consumers</b>: Functions that consumes an iterator and produces something else</span>
+        <br />
+      </div>
+      <div class=" text-left">
+        <pre><code class="language-rust">let one_to_hundred: Vec&lt;u8&gt; = (1..=100).collect();</code></pre>
+        <pre><code class="language-rust">let nums: Vec&lt;i32&gt; = vec![1, 2, 3, 4];
+let even: Option&lt;&i32&gt; = nums
+    .iter()
+    .find(|&x| x % 2 == 0); // 2</code></pre>
+        <pre><code class="language-rust">let sum = nums
+    .iter()
+    .fold(0, |acc, &x| acc + x); // 15</code></pre>
+        <h4>And more: <code>reduce</code>, <code>product</code>, <code>min</code>, <code>max</code>, <code>any</code>, <code>all</code>...</h4>
+      </div>
+    </section>
+
+    <!--Slide 56-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>56/61</footer>
+      <div class="text-left">
+        <span><b>Adapters (transformation)</b>: Functions that take an iterator and return a new iterator</span>
+        <br />
+      </div>
+      <div class=" text-left">
+        <pre><code class="language-rust">let squares: Vec&lt;i32&gt; = nums.iter().map(|&x| x*x).collect();</code></pre>
+        <pre><code class="language-rust">let first_three: Vec&lt;&i32&gt; = nums.iter().take(3).collect();</code></pre>
+        <pre><code class="language-rust">let evens: Vec&lt;&i32&gt; = nums
+    .iter()
+    .filter(|&x| x % 2 == 0)
+    .collect();</code></pre>
+        <h4>And more: <code>take</code>, <code>skip</code>, <code>peekable</code>...</h4>
+      </div>
+    </section>
+
+    <!--Slide 57-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>57/61</footer>
+      <div class="text-left">
+        <span><b>What are closures?</b></span>
+        <br />
+      </div>
+      <div class=" text-left">
+        <div>
+          <span>Functions that capture their environment</span>
+          <pre><code class="language-rust">let add: &dyn Fn(&i32) -&gt; i32 = &|&x| x + outer_var;</code></pre>
+        </div>
+        <div>
+          <h4>Three types:</h4>
+          <ul>
+            <li><code>Fn</code> requires an immutable borrow of the environment and can be called multiple times</li>
+            <li><code>FnMut</code> requires an immutable borrow of the environment and can be called multiple times (sequentially)</li>
+            <li><code>FnOnce</code> requires ownership of the environment and can only be called once because they consume their environment.</li>
+          </ul>
+        </div>
+
+        <div>
+          <pre><code class="language-rust">let a = 1;
+nums
+    .iter()
+    .for_each(|&x| println!("{}", x + a));
+</code></pre>
+        </div>
+
+        <div>
+          <h4>Closures provide concise and inline logic</h4>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 58-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>58/61</footer>
+      <div class="text-left">
+        <h4>Examples</h4>
+        <pre><code class="language-rust">// impl Fn
+let a = 1;
+let add_a = |x: i32| x + a; // add_a(x)</code></pre>
+
+        <div class=" text-left">
+          <pre><code class="language-rust">// FnMut
+let mut a: u32 = 1;
+let mut inc_a = || a += 1; // inc_a()</code></pre>
+        </div>
+
+        <div class=" text-left">
+          <pre><code class="language-rust">// FnOnce
+let name = String::from("Aylin");
+let say_hello = || {
+    let s = name;
+    println!("Hello, {}", s);
+}; // say_hello();</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!--Slide 59-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>59/61</footer>
+      <h4 class="text-left">The <code>move</code> keyword</h4>
+      <pre><code class="language-rust">let data = vec![1, 2, 3];
+let closure = move || println!("captured {data:?} by value");
+
+// Error
+println!("{:?}", data); // data is not available,
+                        // it is owned by the closure</code></pre>
+      <div class=" text-left">
+        <div>
+          <span><b>Note</b>: <code>move</code> closures may still implement <code>Fn</code> or <code>FnMut</code></span>
+          <br />
+          <br />
+        </div>
+        <h4>&Rightarrow; The traits implemented by a closure type are determined by <em>what</em> the closure does with captured values, not <em>how</em> it captures them</h4>
+      </div>
+    </section>
+
+    <!--Slide 60-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>60/61</footer>
+      <div class="text-left">
+        <h4>Closures as function arguments</h4>
+        <pre><code class="language-rust">fn apply_closure&lt;F&gt;(f: F, x: i32) -&gt; i32
+where
+    F: Fn(i32) -&gt; i32,
+    {
+        f(x)
+    }
+
+let double = |x| x * 2;
+println!("{}", apply_closure(double, 5)); // 10</code></pre>
+      </div>
+    </section>
+
+    <!--Slide 61-->
+    <section>
+      <h2 class="slide-title">Iterators & Closures</h2>
+      <footer>61/61</footer>
+      <div class="text-left">
+        <h4>Returning closures from functions</h4>
+        <pre><code class="language-rust">fn create_multiplier(factor: i32) -&gt; impl Fn(i32) -&gt; i32 {
+    move |x| x * factor
+}
+
+let multiply_by_3 = create_multiplier(3);
+println!("{}", multiply_by_3(5)); // 15</code></pre>
+      </div>
+      <div class=" text-left">
+        <h4>&Rightarrow; <code>move</code> is used because the closure outlives the function's scope</h4>
+      </div>
+    </section>
+
+    <!--<section>-->
+      <!--<h2 class="slide-title">Iterators & Closures</h2>-->
+      <!--<div class="text-left">-->
+        <!--<h4>TODO: Tricks with option and result </h4>-->
+        <!--<h4>TODO: iterating over an option</h4>-->
+      <!--</div>-->
+    <!--</section>-->
+
+    <section>
+      <h2 class="slide-title">Wrap-Up</h2>
+      <ul class="text-left">
+        <li><b>Idiomatic Rust:</b> Write concise, ecosystem-friendly code by embracing ownership, borrowing, and community conventions.</li>
+        <li><b>Ownership & Borrowing:</b> Master Rust's memory safety through ownership rules, borrowing practices, and reference validity.</li>
+        <li><b>Enums & Structs:</b> Utilize enums for flexible variants and pattern matching, and design structs for data organization and behavior.</li>
+        <li><b>Traits:</b> Leverage traits to define shared behavior, enable polymorphism, and derive common functionality like <code>Debug</code> and <code>Clone</code>.</li>
+        <li><b>Error Handling:</b> Handle errors with <code>Option</code> and <code>Result</code>, propagate them with <code>?</code>, and simplify with custom error types or libraries like <code>thiserror</code>.</li>
+        <li><b>Functional Features:</b> Utilize iterators and closures for clean, efficient, and expressive logic, embracing their laziness and declarative transformation power.</li>
+      </ul>
+      <br />
+      <div class="">
+        <h3>Practice is essential for fluency in idiomatic Rust</h3>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="slide-title">Resources</h2>
+      <ul class="text-left">
+        <li>https://doc.rust-lang.org/book/</li>
+        <li>https://rust-unofficial.github.io/patterns/idioms/index.html</li>
+        <li>https://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/book/first-edition/iterators.html</li>
+        <li>https://edgl.dev/blog/wrapping-errors-in-rust/</li>
+        <li>https://hoverbear.org/blog/optional-arguments/</li>
+        <li>https://doc.rust-lang.org/std/iter/index.html</li>
+        <li>https://fettblog.eu/slides/idiomatic-rust/</li>
+      </ul>
+    </section>
+
+    <!--Last slide-->
+    <section>
+      <h2 class="slide-title">Next steps</h2>
+      <ul class="text-left">
+        <li>Async</li>
+        <li>Testing (by me)</li>
+        <li>Advanced features</li>
+        <li>Decentralized programming</li>
+        <li>Blockchain development</li>
+        <li>Project, review and next steps</li>
+      </ul>
+    </section>
+
+    <div id="progress-bar"></div>
+
+    <!-- TOC script-->
+    <script>
+      $(function ($) {
+        var toc = $('ul#toc')
+        $('.section-header h2').each(function (index, element) {
+          toc.append('<li>' + $(element).text() + '</li>')
+        });
+      });
+    </script>
+  </body>
+</html>
