@@ -1417,8 +1417,8 @@ let even: Option&lt;&i32&gt; = nums
         <div>
           <h4>Three types:</h4>
           <ul>
-            <li><code>Fn</code> requires an immutable borrow of the environment and can be called multiple times</li>
-            <li><code>FnMut</code> requires an immutable borrow of the environment and can be called multiple times (sequentially)</li>
+            <li><code>Fn</code> requires immutable borrow of the environment and can be called multiple times</li>
+            <li><code>FnMut</code> requires mutable borrow of the environment and can be called multiple times (sequentially)</li>
             <li><code>FnOnce</code> requires ownership of the environment and can only be called once because they consume their environment.</li>
           </ul>
         </div>
