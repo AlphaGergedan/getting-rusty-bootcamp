@@ -16,7 +16,7 @@ Lecture 5: Testing
 
 ## Exercises
 
-Will be soon published.
+See the `/exercises` folder.
 
 ## Sources
 
